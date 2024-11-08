@@ -1,30 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import './SignUp.css';
 
-const Login = () => {
+const SignUp = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (email === 'user@example.com' && password === 'password123') {
-      navigate('/transaction');
-    } else {
-      alert('Invalid email or password');
-    }
-  };
-
-  const handleSignUp = () => {
-    navigate('/signup');
+    // logika pendaftaran
+    console.log('Nama:', name, 'Email:', email, 'Password:', password);
+    navigate('/');
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
+    <div className="signup-container">
+      <button className="back-button" onClick={() => navigate('/')}>Kembali</button>
+      <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>
+        <label>Nama:</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <label>Email:</label>
         <input
           type="email"
@@ -39,13 +41,10 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Sign Up</button>
       </form>
-      
-      <p>Don't have an account yet?</p>
-      <button onClick={handleSignUp}>Sign Up</button>
     </div>
   );
 };
 
-export default Login;
+export default SignUp;

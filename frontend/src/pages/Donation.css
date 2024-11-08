@@ -1,0 +1,27 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.donation-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.donation-container h2 {
+    font-size: 24px;
+    color: #4b3a6f;
+    margin-bottom: 20px;
+}
+
+.donation-container p {
+    font-size: 16px;
+    color: #333;
+}
