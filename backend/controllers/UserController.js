@@ -103,7 +103,8 @@ async function getUserDetails(req, res) {
         const result = await pool.query(
             `UPDATE users 
             SET balance = balance + $1, 
-                donation = donation + $2 
+                donation = donation + $2,
+                income = income + $1
             WHERE id = $3 
             RETURNING balance, donation`,
             [amount, donationAmount, id] // Use the amount, donation amount, and user ID in the query

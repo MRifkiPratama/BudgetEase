@@ -34,15 +34,31 @@ async function payment(req, res) {
 
         // Perform the transaction
         await pool.query('BEGIN');
-        await pool.query('UPDATE users SET balance = balance - $1 WHERE id = $2', [amount, sender.id]);
-        await pool.query('UPDATE users SET balance = balance + $1 WHERE id = $2', [amount, receiver.id]);
+        
+        // Update sender's balance and expense
+        await pool.query(
+            'UPDATE users SET balance = balance - $1, expense = expense + $1 WHERE id = $2',
+            [amount, sender.id]
+        );
+        
+        // Update receiver's balance and income
+        await pool.query(
+            'UPDATE users SET balance = balance + $1, income = income + $1 WHERE id = $2',
+            [amount, receiver.id]
+        );
+
+        // Record the transaction
         await pool.query(
             'INSERT INTO transactions (user_sender_id, user_receiver_id, amount, transaction_type) VALUES ($1, $2, $3, $4)',
             [sender.id, receiver.id, amount, payment_type]
         );
+
         await pool.query('COMMIT');
 
-        res.status(200).json({ message: "Payment successful", transaction: { sender: sender.name, receiver: receiver.name, amount, payment_type } });
+        res.status(200).json({
+            message: "Payment successful",
+            transaction: { sender: sender.name, receiver: receiver.name, amount, payment_type }
+        });
 
     } catch (error) {
         await pool.query('ROLLBACK');
@@ -50,6 +66,7 @@ async function payment(req, res) {
         res.status(500).json({ error: "An error occurred during the payment process" });
     }
 }
+
 
 async function history(req, res) {
     const { id } = req.params; // ID pengguna dari route

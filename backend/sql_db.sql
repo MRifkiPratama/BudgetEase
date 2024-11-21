@@ -4,7 +4,9 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL CHECK (email ~* '^[^@]+@[^@]+\.[^@]+$'),
     password VARCHAR(255) NOT NULL,
     balance NUMERIC(12, 2) DEFAULT 0.00,  
-    donation NUMERIC(12, 2) DEFAULT 0.00,             
+    donation NUMERIC(12, 2) DEFAULT 0.00,
+    income NUMERIC(12,2) DEFAULT 0.00,
+    expense NUMERIC(12,2) DEFAULT 0.00,            
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

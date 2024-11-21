@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const userRoutes = require('./routes/UserRoute');
 const transactionRoutes = require('./routes/TransactionRoute');
+const reportRoutes = require('./routes/ReportRoute');
+const donationRoutes = require('./routes/DonationRoute');
+
 
 const dotenv = require('dotenv');
 
@@ -17,6 +20,8 @@ app.use(bodyParser.json());
 
 app.use('/users', userRoutes);
 app.use('/transaction', transactionRoutes);
+app.use('/report', reportRoutes);
+app.use('/donation', donationRoutes)
 
 
 app.listen(PORT, () => {
