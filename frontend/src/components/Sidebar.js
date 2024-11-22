@@ -9,9 +9,10 @@ const Sidebar = () => {
     <div className="sidebar">
       <h2>BudgetEase</h2>
       <ul>
+        <li onClick={() => navigate('/profile')}>Profile</li>
         <li onClick={() => navigate('/transaction')}>Transaction</li>
         <li onClick={() => navigate('/donation')}>Donation</li>
-        <li onClick={() => navigate('/profile')}>Profile</li>
+        <li onClick={() => navigate('/report')}>Report</li>
         <li onClick={() => navigate('/logout')}>Log Out</li>
       </ul>
     </div>

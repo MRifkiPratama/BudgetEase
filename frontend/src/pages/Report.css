@@ -6,7 +6,7 @@ body, html {
     font-family: Arial, sans-serif;
 }
 
-.donation-container {
+.report-container {
     width: 100%;
     max-width: 400px;
     margin: auto;
@@ -17,37 +17,14 @@ body, html {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
-.donation-container h1 {
+.report-container h1 {
     font-size: 24px;
     color: #4b3a6f;
     margin-bottom: 20px;
 }
 
-.donation-container p {
+.report-container p {
     font-size: 16px;
     color: #4b3a6f;
-    margin-bottom: 20px;
-}
-
-.donation-container input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-.donation-container button {
-    padding: 12px;
-    background-color: #6a4b93;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.donation-container button:hover {
-    background-color: #5a3f7b;
 }

@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp';
 import Transaction from './pages/Transaction';
 import Donation from './pages/Donation';
 import Profile from './pages/Profile';
+import Report from './pages/Report';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/transaction" element={<Transaction />} />
             <Route path="/donation" element={<Donation />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/report" element={<Report />} />
             <Route path="/logout" element={<Login />} /> {/* Log Out */}
           </Routes>
         </div>
