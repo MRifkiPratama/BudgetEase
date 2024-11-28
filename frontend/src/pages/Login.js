@@ -5,15 +5,34 @@ import './Login.css';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email === 'user@example.com' && password === 'password123') {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.error || 'An error occurred');
+        return;
+      }
+
+      const data = await response.json();
+      alert(data.message);
+      // Navigate to the Transaction page after successful login
       navigate('/transaction');
-    } else {
-      alert('Invalid email or password');
+    } catch (error) {
+      console.error('Error during login:', error);
+      setErrorMessage('An error occurred while trying to log in');
     }
   };
 
@@ -42,6 +61,8 @@ const Login = () => {
         <button type="submit">Login</button>
       </form>
       
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+
       <p>Don't have an account yet?</p>
       <button onClick={handleSignUp}>Sign Up</button>
     </div>
