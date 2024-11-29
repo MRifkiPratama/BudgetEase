@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const Login = () => {
+const Login = ({ setUserId }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -28,7 +28,16 @@ const Login = () => {
 
       const data = await response.json();
       alert(data.message);
-      // Navigate to the Transaction page after successful login
+
+      const userId = data.account.id;
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('user', JSON.stringify(data.account));
+      console.log('Logged in user ID:', userId);
+
+      if (setUserId) {
+        setUserId(userId);
+      }
+
       navigate('/transaction');
     } catch (error) {
       console.error('Error during login:', error);
