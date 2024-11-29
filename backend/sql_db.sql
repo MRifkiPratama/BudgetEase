@@ -14,10 +14,10 @@ CREATE TYPE payment_type AS ENUM (
  'Food',  
  'Health',  
  'Education',
- 'Entertaiment',
+ 'Entertainment',
  'Lifestyle',
  'General',
- 'other',
+ 'Other',
  'Transportation',
  'Transfer'
 );

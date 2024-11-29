@@ -12,8 +12,6 @@ const dotenv = require('dotenv');
 
 const app = express();
 const PORT = 5000;
-// dotenv.config();
-// console.log(process.env.password);
 app.use(cors());
 app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.json());
