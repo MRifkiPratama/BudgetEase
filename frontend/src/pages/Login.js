@@ -29,16 +29,19 @@ const Login = ({ setUserId }) => {
       const data = await response.json();
       alert(data.message);
 
-      const userId = data.account.id;
-      localStorage.setItem('userId', userId);
-      localStorage.setItem('user', JSON.stringify(data.account));
-      console.log('Logged in user ID:', userId);
+      const user = data.account;
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('userName', user.name);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userBalance', user.balance);
+      localStorage.setItem('user', JSON.stringify(user));
+      console.log('Logged in user:', user);
 
       if (setUserId) {
-        setUserId(userId);
+        setUserId(user.id);
       }
 
-      navigate('/transaction');
+      navigate('/profile');
     } catch (error) {
       console.error('Error during login:', error);
       setErrorMessage('An error occurred while trying to log in');
@@ -69,7 +72,7 @@ const Login = ({ setUserId }) => {
         />
         <button type="submit">Login</button>
       </form>
-      
+
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <p>Don't have an account yet?</p>
