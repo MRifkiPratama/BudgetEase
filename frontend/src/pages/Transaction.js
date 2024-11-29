@@ -19,12 +19,12 @@ function Transaction() {
     "Food",
     "Health",
     "Education",
-    "Entertaiment",
+    "Entertainment",
     "Lifestyle",
     "General",
+    "Other",
     "Transportation",
     "Transfer",
-    "Other",
   ];
 
   useEffect(() => {
@@ -175,7 +175,7 @@ function Transaction() {
         </select>
         <input
           type="text"
-          placeholder="Destination (Name or ID)"
+          placeholder="Destination (ID)"
           value={paymentDetails.destination}
           onChange={(e) =>
             setPaymentDetails({ ...paymentDetails, destination: e.target.value })
@@ -205,7 +205,7 @@ function Transaction() {
         <ul>
           {filteredTransactions.map((tx, index) => (
             <li key={index}>
-              {tx.transaction_type}: ${tx.amount} on{" "}
+              {tx.transaction_type}: Rp. {tx.amount} on{" "}
               {new Date(tx.transaction_date).toLocaleDateString()} to {tx.receiver_name}
             </li>
           ))}
@@ -219,7 +219,7 @@ function Transaction() {
         <ul>
           {transactions.map((tx, index) => (
             <li key={index}>
-              {tx.transaction_type}: ${tx.amount} on{" "}
+              {tx.transaction_type}: Rp. {tx.amount} on{" "}
               {new Date(tx.transaction_date).toLocaleDateString()} to {tx.receiver_name}
             </li>
           ))}

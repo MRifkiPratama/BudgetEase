@@ -46,7 +46,7 @@ function Report() {
       } else {
         throw new Error(expensesData.error || "Failed to fetch expenses data.");
       }
-      
+
       const scoreResponse = await fetch(
         `${process.env.REACT_APP_API_URL}/report/${userId}/score`
       );
@@ -80,8 +80,8 @@ function Report() {
       {!loading && !error && (
         <div className="report-content">
           <h2>Financial Summary</h2>
-          <p>Total Income: ${totalIncome}</p>
-          <p>Total Expenses: ${totalExpenses}</p>
+          <p>Total Income: Rp. {totalIncome}</p>
+          <p>Total Expenses: Rp. {totalExpenses}</p>
           <p>Financial Health Score: {financeHealthScore}%</p>
         </div>
       )}

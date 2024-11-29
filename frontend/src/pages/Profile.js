@@ -96,7 +96,7 @@ function Profile() {
           <p><strong>User ID:</strong> {userId}</p>
           <p><strong>Name:</strong> {user.name || "N/A"}</p>
           <p><strong>Email:</strong> {user.email || "N/A"}</p>
-          <p><strong>Balance:</strong> ${user.balance || "0.00"}</p>
+          <p><strong>Balance:</strong> Rp. {user.balance || "0.00"}</p>
         </>
       )}
 
