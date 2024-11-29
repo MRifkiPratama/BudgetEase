@@ -5,22 +5,14 @@ import './Login.css';
 const Login = ({ setUserId }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-<<<<<<< HEAD
-  const [error, setError] = useState('');
-=======
   const [errorMessage, setErrorMessage] = useState('');
->>>>>>> 4571913486d353dadd405dc59fd9b2b0847614b5
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-<<<<<<< HEAD
-      const response = await fetch('http://localhost:5000/users/login', {
-=======
       const response = await fetch(`${process.env.REACT_APP_API_URL}/users/login`, {
->>>>>>> 4571913486d353dadd405dc59fd9b2b0847614b5
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,24 +20,6 @@ const Login = ({ setUserId }) => {
         body: JSON.stringify({ email, password }),
       });
 
-<<<<<<< HEAD
-      if (response.ok) {
-        const data = await response.json();
-        // Assuming the backend sends a token or some user data
-        console.log('Login successful:', data);
-        // Save token to localStorage (or a secure place)
-        localStorage.setItem('token', data.token);
-
-        // Navigate to the transactions page
-        navigate('/transaction');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Invalid email or password');
-      }
-    } catch (error) {
-      setError('Something went wrong. Please try again later.');
-      console.error('Error during login:', error);
-=======
       if (!response.ok) {
         const errorData = await response.json();
         setErrorMessage(errorData.error || 'An error occurred');
@@ -71,7 +45,6 @@ const Login = ({ setUserId }) => {
     } catch (error) {
       console.error('Error during login:', error);
       setErrorMessage('An error occurred while trying to log in');
->>>>>>> 4571913486d353dadd405dc59fd9b2b0847614b5
     }
   };
 
