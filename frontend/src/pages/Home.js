@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import "./Profile.css";
+import { useNavigate } from "react-router-dom";
+import "./Home.css";
 
-function Profile() {
+const Home = () => {
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState({});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
+  // Fetch userId from localStorage
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
@@ -16,6 +19,7 @@ function Profile() {
     }
   }, []);
 
+  // Fetch user details from the backend
   useEffect(() => {
     if (!userId) return;
 
@@ -39,21 +43,24 @@ function Profile() {
   }, [userId]);
 
   return (
-    <div className="profile-container">
-      <h1>User Profile</h1>
+    <div className="home-container">
+      <h1>Welcome, {user.name || "User"}!</h1>
       {loading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
-
-      {userId && (
-        <>
-          <p><strong>User ID:</strong> {userId}</p>
-          <p><strong>Name:</strong> {user.name || "N/A"}</p>
-          <p><strong>Email:</strong> {user.email || "N/A"}</p>
-          <p><strong>Balance:</strong> Rp. {user.balance || "0.00"}</p>
-        </>
+      {!loading && !error && (
+        <p>Your current balance is: <strong>Rp. {user.balance || "0.00"}</strong></p>
       )}
+      <p>What would you like to do today?</p>
+      <div className="home-actions">
+        <button onClick={() => navigate("/profile")}>View Profile</button>
+        <button onClick={() => navigate("/topup")}>Top Up Balance</button>
+        <button onClick={() => navigate("/transaction")}>Manage Transactions</button>
+        <button onClick={() => navigate("/history")}>View Transaction History</button>
+        <button onClick={() => navigate("/donation")}>Make a Donation</button>
+        <button onClick={() => navigate("/report")}>Generate Report</button>
+      </div>
     </div>
   );
-}
+};
 
-export default Profile;
+export default Home;

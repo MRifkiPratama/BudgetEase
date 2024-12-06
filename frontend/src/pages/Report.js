@@ -35,7 +35,7 @@ function Report() {
       } else {
         throw new Error(incomeData.error || "Failed to fetch income data.");
       }
-      
+
       const expensesResponse = await fetch(
         `${process.env.REACT_APP_API_URL}/report/${userId}/expenses`
       );
@@ -69,6 +69,20 @@ function Report() {
     fetchReportData();
   }, [userId]);
 
+  const getHealthStatus = (score) => {
+    if (score >= 150) {
+      return "Amazing";
+    } else if (score >= 100 && score < 150) {
+      return "Great";
+    } else if (score >= 70 && score < 100) {
+      return "Good";
+    } else if (score >= 50 && score < 70) {
+      return "Fine";
+    } else {
+      return "Bad";
+    }
+  };
+
   return (
     <div className="report-container">
       <h1>User Report</h1>
@@ -83,6 +97,7 @@ function Report() {
           <p>Total Income: Rp. {totalIncome}</p>
           <p>Total Expenses: Rp. {totalExpenses}</p>
           <p>Financial Health Score: {financeHealthScore}%</p>
+          <p>Status: {financeHealthScore !== null ? getHealthStatus(financeHealthScore) : "N/A"}</p>
         </div>
       )}
     </div>

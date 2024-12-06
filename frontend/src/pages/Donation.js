@@ -3,43 +3,75 @@ import "./Donation.css";
 
 function Donation() {
   const [userId, setUserId] = useState(null);
+  const [user, setUser] = useState({});
   const [donation, setDonation] = useState(0);
   const [donationDetails, setDonationDetails] = useState({
     amount: "",
-    cause: "",
+    operation: "",
   });
+  const [selectedDonationDetails, setSelectedDonationDetails] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const causes = [
-    "Education",
-    "Health",
-    "Environment",
-    "Animal Welfare",
-    "Community Development",
+  const donations = [
+    {
+      operation: "50 Trees",
+      details: "Planting 50 trees in deforested areas to combat climate change.",
+    },
+    {
+      operation: "Ocean Care",
+      details: "Cleaning plastic waste from oceans and supporting marine life.",
+    },
+    {
+      operation: "Food for All",
+      details: "Providing meals for underprivileged communities worldwide.",
+    },
+    {
+      operation: "Animal Rescue",
+      details: "Saving and rehabilitating stray animals in urban areas.",
+    },
+    {
+      operation: "Education for Kids",
+      details: "Supporting education for children in remote villages.",
+    },
   ];
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
     if (storedUserId) {
       setUserId(storedUserId);
+      fetchUserDetails(storedUserId);
+      fetchAllDonations(storedUserId);
     } else {
       setError("User ID is missing. Please log in again.");
     }
   }, []);
 
-  const fetchAllDonations = async () => {
-    if (!userId) return;
-
+  const fetchUserDetails = async (id) => {
     setLoading(true);
     setError("");
-    setSuccess("");
-
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/donation/${userId}`
-      );
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${id}`);
+      const data = await response.json();
+      if (response.ok) {
+        setUser(data.user || {});
+      } else {
+        setError(data.error || "Failed to fetch user details.");
+      }
+    } catch (err) {
+      console.error("Error fetching user details:", err);
+      setError("Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllDonations = async (id) => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/donation/${id}`);
       const data = await response.json();
 
       if (response.ok) {
@@ -58,9 +90,9 @@ function Donation() {
   const handleDonation = async () => {
     if (!userId) return;
 
-    const { amount, cause } = donationDetails;
+    const { amount, operation } = donationDetails;
 
-    if (!amount || !cause) {
+    if (!amount || !operation) {
       setError("Please fill in all donation details.");
       return;
     }
@@ -89,8 +121,9 @@ function Donation() {
 
       if (response.ok) {
         setSuccess("Donation successful!");
-        setDonationDetails({ amount: "", cause: "" });
-        fetchAllDonations();
+        setDonationDetails({ amount: "", operation: "" });
+        fetchAllDonations(userId);
+        fetchUserDetails(userId);
       } else {
         setError(data.error || "Donation failed.");
       }
@@ -102,14 +135,20 @@ function Donation() {
     }
   };
 
-  useEffect(() => {
-    fetchAllDonations();
-  }, [userId]);
+  const handleOperationChange = (e) => {
+    const selectedOperation = e.target.value;
+    setDonationDetails({ ...donationDetails, operation: selectedOperation });
+    const donationDetail = donations.find(
+      (donation) => donation.operation === selectedOperation
+    );
+    setSelectedDonationDetails(donationDetail?.details || "");
+  };
 
   return (
     <div className="donation-container">
       <h1>Donation Management</h1>
       {userId && <p>Logged in as User ID: {userId}</p>}
+      <p><strong>Balance:</strong> Rp. {user.balance || "0.00"}</p>
 
       {error && <p className="error-message">{error}</p>}
       {success && <p className="success-message">{success}</p>}
@@ -127,19 +166,22 @@ function Donation() {
           }
         />
         <select
-          value={donationDetails.cause}
-          onChange={(e) =>
-            setDonationDetails({ ...donationDetails, cause: e.target.value })
-          }
+          value={donationDetails.operation}
+          onChange={handleOperationChange}
           required
         >
-          <option value="">Select a Cause</option>
-          {causes.map((cause, index) => (
-            <option key={index} value={cause}>
-              {cause}
+          <option value="">Select a Donation</option>
+          {donations.map((donation, index) => (
+            <option key={index} value={donation.operation}>
+              {donation.operation}
             </option>
           ))}
         </select>
+        {selectedDonationDetails && (
+          <p className="donation-details">
+            <strong>Details:</strong> {selectedDonationDetails}
+          </p>
+        )}
         <button onClick={handleDonation}>Submit Donation</button>
       </div>
 

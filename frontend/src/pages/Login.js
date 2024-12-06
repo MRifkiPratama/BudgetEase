@@ -41,7 +41,7 @@ const Login = ({ setUserId }) => {
         setUserId(user.id);
       }
 
-      navigate('/profile');
+      navigate('/home');
     } catch (error) {
       console.error('Error during login:', error);
       setErrorMessage('An error occurred while trying to log in');
