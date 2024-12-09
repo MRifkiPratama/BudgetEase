@@ -1,21 +1,21 @@
 const pool = require('../db');
 const bcrypt = require('bcrypt');
+const User = require('../models/User'); // Pastikan ada model User
+
 
 
 const getTotalIncome = async (req, res) => {
     const { id } = req.params; // User ID
 
     try {
-        const result = await pool.query(
-            'SELECT income FROM users WHERE id = $1',
-            [id]
-        );
+        // Find the user by ID in MongoDB
+        const user = await User.findById(id);
 
-        if (result.rowCount === 0) {
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const totalIncome = result.rows[0].income;
+        const totalIncome = user.income;
         res.status(200).json({ message: "Total income retrieved", total_income: totalIncome });
     } catch (error) {
         console.error('Error fetching total income:', error);
@@ -24,20 +24,19 @@ const getTotalIncome = async (req, res) => {
 };
 
 
+
 const getTotalExpenses = async (req, res) => {
     const { id } = req.params; // User ID
 
     try {
-        const result = await pool.query(
-            'SELECT expense FROM users WHERE id = $1',
-            [id]
-        );
+        // Find the user by ID in MongoDB
+        const user = await User.findById(id);
 
-        if (result.rowCount === 0) {
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const totalExpenses = result.rows[0].expense;
+        const totalExpenses = user.expense;
         res.status(200).json({ message: "Total expenses retrieved", total_expenses: totalExpenses });
     } catch (error) {
         console.error('Error fetching total expenses:', error);
@@ -49,17 +48,14 @@ const getFinanceHealthScore = async (req, res) => {
     const { id } = req.params; // User ID
 
     try {
-        // Fetch user income and expense
-        const result = await pool.query(
-            'SELECT income, expense FROM users WHERE id = $1',
-            [id]
-        );
+        // Find the user by ID in MongoDB
+        const user = await User.findById(id);
 
-        if (result.rowCount === 0) {
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
 
-        const { income, expense } = result.rows[0];
+        const { income, expense } = user;
 
         if (income === 0) {
             return res.status(400).json({ error: "Cannot calculate score with zero income" });
@@ -77,7 +73,6 @@ const getFinanceHealthScore = async (req, res) => {
         res.status(500).json({ error: "An error occurred while calculating the score" });
     }
 };
-
 
 
 

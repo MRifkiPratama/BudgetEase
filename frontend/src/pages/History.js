@@ -84,7 +84,7 @@ function History() {
   return (
     <div className="transaction-container">
       <h1>Transaction History</h1>
-      {userId && <p>Logged in as User ID: {userId}</p>}
+      {userId && <p> You can see your transaction history here</p>}
 
       {error && <p className="error-message">{error}</p>}
       {loading && <p>Loading...</p>}

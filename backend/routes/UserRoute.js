@@ -4,7 +4,8 @@ const {
     register,
     getUserDetails,
     logout,
-    topUp
+    topUp,
+    getAllUsers // Pastikan ini diimport
 } = require('../controllers/UserController');
 
 const router = express.Router();
@@ -28,5 +29,7 @@ router.post('/:id/topup', async (req, res) => {
 router.post('/logout', async (req, res) => {
     await logout(req, res);
 });
+
+
 
 module.exports = router;

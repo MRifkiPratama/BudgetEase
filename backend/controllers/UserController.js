@@ -1,59 +1,78 @@
 // server/controllers/UserController.js
 const pool = require('../db');
 const bcrypt = require('bcrypt');
+const User = require('../models/User'); // Model MongoDB
+
 
 async function login(req, res) {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    );
+    // Cari pengguna berdasarkan email di MongoDB
+    const user = await User.findOne({ email });
 
-    if (result.rowCount === 0) {
+    if (!user) {
       return res.status(401).json({ error: "Incorrect email or password provided" });
     }
 
-    var user = result.rows[0];
+    // Verifikasi password yang dimasukkan dengan yang ada di database
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Incorrect password provided" });
     }
-    res.status(200).json({ message: "Login Successful", account: user});
+
+    // Jika login berhasil, kembalikan data pengguna
+    res.status(200).json({
+      message: "Login Successful",
+      account: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        balance: user.balance,
+        donation: user.donation,
+        income: user.income,
+        expense: user.expense,
+      },
+    });
   } catch (error) {
     console.error('Error in login:', error);
     res.status(500).json({ error: "An error occurred" });
   }
 }
 
+
 async function register(req, res) {
-  const { name, email, password } = req.body;
+  const { name, email, password } = req.body; // Ambil data dari request body
 
   try {
-    // Check if the email is already in use
-    const emailCheck = await pool.query(
-      'SELECT COUNT(*) FROM users WHERE email = $1',
-      [email]
-    );
-
-    if (emailCheck.rows[0].count > 0) {
+    // Validasi jika email sudah terdaftar
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ error: "Email is already in use" });
     }
-    // Check if there are any users in the database
-    const userCount = await pool.query('SELECT COUNT(*) FROM users');
-    const isFirstUser = userCount.rows[0].count === 0;
-    // Hash the password before storing it
+
+    // Hash password sebelum disimpan
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Insert the new user into the database
-    const result = await pool.query(
-      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, hashedPassword]
-    );
 
-    const newUser = result.rows[0];
+    // Buat user baru
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,  // Simpan password yang sudah di-hash
+    });
 
-    res.status(201).json(newUser);
+    // Simpan user ke database
+    await newUser.save();
+
+    // Kirim response jika berhasil
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+      },
+    });
   } catch (error) {
     console.error('Error registering user:', error);
     res.status(500).json({ error: "An error occurred" });
@@ -61,102 +80,81 @@ async function register(req, res) {
 }
 
 async function getUserDetails(req, res) {
-    const { id } = req.params; // Extracting user ID from the request parameters
-  
-    try {
-      const result = await pool.query(
-        'SELECT name, email, balance FROM users WHERE id = $1',
-        [id] // Use the extracted ID in the query
-      );
-  
-      if (result.rowCount === 0) {
-        return res.status(404).json({ error: "User not found" });
-      }
-  
-      const user = result.rows[0];
-      res.status(200).json({ message: "User details retrieved", user });
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      res.status(500).json({ error: "An error occurred" });
+  const { id } = req.params; // Mengambil ID dari parameter URL
+
+  try {
+    // Cari pengguna berdasarkan ID di MongoDB
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    // Jika pengguna ditemukan, kembalikan detail pengguna
+    res.status(200).json({
+      message: "User details retrieved successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        balance: user.balance,
+        donation: user.donation,
+        income: user.income,
+        expense: user.expense,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ error: "An error occurred" });
   }
-
-
-  async function topUp(req, res) {
-    const { id } = req.params; // Extract user ID from the request parameters
-    const { amount, donate } = req.body; // Extract the amount and donation agreement from the request body
-
-    // Validate amount
-    if (typeof amount !== 'number' || amount <= 0) {
-        return res.status(400).json({ error: "Invalid amount. It must be a positive number." });
-    }
-
-    let donationAmount = 0;
-
-    // Calculate donation if user agrees
-    if (donate) {
-        donationAmount = amount * 0.02; // 2% of the top-up amount
-    }
-
-    try {
-        // Update the user's balance and donation
-        const result = await pool.query(
-            `UPDATE users 
-            SET balance = balance + $1, 
-                donation = donation + $2,
-                income = income + $1
-            WHERE id = $3 
-            RETURNING balance, donation`,
-            [amount, donationAmount, id] // Use the amount, donation amount, and user ID in the query
-        );
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        const updatedBalance = result.rows[0].balance;
-        const updatedDonation = result.rows[0].donation;
-
-        res.status(200).json({
-            message: "User balance updated successfully",
-            balance: updatedBalance,
-            donation: updatedDonation
-        });
-    } catch (error) {
-        console.error('Error updating user balance:', error);
-        res.status(500).json({ error: "An error occurred" });
-    }
 }
 
 
-//   async function topUp(req, res) {
-//     const { id } = req.params; // Extract user ID from the request parameters
-//     const { amount } = req.body; // Extract the amount to top up from the request body
+async function topUp(req, res) {
+  const { id } = req.params; // Mengambil ID dari parameter URL
+  const { amount, donate } = req.body; // Jumlah top-up dan apakah menyetujui donasi
 
-//     // Validate amount
-//     if (typeof amount !== 'number' || amount <= 0) {
-//         return res.status(400).json({ error: "Invalid amount. It must be a positive number." });
-//     }
+  // Validasi jumlah top-up
+  if (typeof amount !== 'number' || amount <= 0) {
+    return res.status(400).json({ error: "Invalid amount. It must be a positive number." });
+  }
 
-//     try {
-//         // Update the user's balance
-//         const result = await pool.query(
-//             'UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING balance',
-//             [amount, id] // Use the amount and user ID in the query
-//         );
+  let donationAmount = 0;
 
-//         if (result.rowCount === 0) {
-//             return res.status(404).json({ error: "User not found" });
-//         }
+  // Hitung jumlah donasi jika menyetujui
+  if (donate) {
+    donationAmount = amount * 0.02; // 2% dari jumlah top-up
+  }
 
-//         const updatedBalance = result.rows[0].balance;
-//         res.status(200).json({ message: "User balance updated successfully", balance: updatedBalance });
-//     } catch (error) {
-//         console.error('Error updating user balance:', error);
-//         res.status(500).json({ error: "An error occurred" });
-//     }
-// }
-  
+  try {
+    // Perbarui saldo pengguna di MongoDB
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Perbarui saldo pengguna, donasi, dan pendapatan
+    user.balance += (amount - donationAmount);
+    user.donation += donationAmount;
+    user.expense += donationAmount;
+    user.income += amount;
+
+    // Simpan perubahan ke MongoDB
+    await user.save();
+
+    res.status(200).json({
+      message: "User balance updated successfully",
+      balance: user.balance,
+      donation: user.donation,
+    });
+  } catch (error) {
+    console.error('Error updating user balance:', error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+}
+
+
 
 async function logout(req, res) {
   try {
@@ -172,5 +170,6 @@ async function logout(req, res) {
     res.status(500).json({ error: 'An error occurred' });
   }
 }
+
 
 module.exports = { login, register, logout, getUserDetails, topUp };

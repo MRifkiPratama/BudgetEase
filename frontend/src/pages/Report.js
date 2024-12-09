@@ -70,11 +70,11 @@ function Report() {
   }, [userId]);
 
   const getHealthStatus = (score) => {
-    if (score >= 150) {
+    if (score == 100) {
       return "Amazing";
-    } else if (score >= 100 && score < 150) {
+    } else if (score >= 80 && score < 100) {
       return "Great";
-    } else if (score >= 70 && score < 100) {
+    } else if (score >= 70 && score < 80) {
       return "Good";
     } else if (score >= 50 && score < 70) {
       return "Fine";

@@ -1,5 +1,5 @@
-const pool = require('../db');
-const bcrypt = require('bcrypt');
+const User = require('../models/User'); // Pastikan ada model User
+const Transaction = require('../models/Transaction'); // Model Transaction
 
 async function payment(req, res) {
     const { id } = req.params; // sender's user ID from the route
@@ -9,135 +9,141 @@ async function payment(req, res) {
         if (amount <= 0) {
             return res.status(400).json({ error: "Amount must be greater than zero" });
         }
+
         const validPaymentTypes = ['Food', 'Health', 'Education', 'Entertainment', 'Lifestyle', 'General', 'Other', 'Transportation', 'Transfer'];
         if (!validPaymentTypes.includes(payment_type)) {
             return res.status(400).json({ error: "Invalid payment type" });
         }
 
-        // Fetch sender and receiver
-        const senderResult = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-        if (senderResult.rowCount === 0) {
+        // Fetch sender from MongoDB
+        const sender = await User.findById(id);
+        if (!sender) {
             return res.status(404).json({ error: "Sender not found" });
         }
-        const sender = senderResult.rows[0];
 
-        const receiverResult = await pool.query('SELECT * FROM users WHERE name = $1 OR id = $2', [destination, destination]);
-        if (receiverResult.rowCount === 0) {
+        // Fetch receiver by name or id
+        const receiver = await User.findOne({ $or: [{ name: destination }, { _id: destination }] });
+        if (!receiver) {
             return res.status(404).json({ error: "Receiver not found" });
         }
-        const receiver = receiverResult.rows[0];
 
         // Check sender's balance
         if (sender.balance < amount) {
             return res.status(400).json({ error: "Insufficient balance" });
         }
 
-        // Perform the transaction
-        await pool.query('BEGIN');
-        
-        // Update sender's balance and expense
-        await pool.query(
-            'UPDATE users SET balance = balance - $1, expense = expense + $1 WHERE id = $2',
-            [amount, sender.id]
-        );
-        
-        // Update receiver's balance and income
-        await pool.query(
-            'UPDATE users SET balance = balance + $1, income = income + $1 WHERE id = $2',
-            [amount, receiver.id]
-        );
+        // Start transaction in MongoDB
+        const session = await User.startSession();
+        session.startTransaction();
 
-        // Record the transaction
-        await pool.query(
-            'INSERT INTO transactions (user_sender_id, user_receiver_id, amount, transaction_type) VALUES ($1, $2, $3, $4)',
-            [sender.id, receiver.id, amount, payment_type]
-        );
+        try {
+            // Ensure amount is a valid number
+            const transactionAmount = parseFloat(amount);
+            if (isNaN(transactionAmount)) {
+                return res.status(400).json({ error: "Invalid amount provided" });
+            }
 
-        await pool.query('COMMIT');
+            // Update sender's balance and expense (ensure no repetition)
+            sender.balance -= transactionAmount;  // Decrease balance by amount
+            sender.expense += transactionAmount;  // Add amount to expenses
+            await sender.save({ session });
 
-        res.status(200).json({
-            message: "Payment successful",
-            transaction: { sender: sender.name, receiver: receiver.name, amount, payment_type }
-        });
+            // Update receiver's balance and income (ensure no repetition)
+            receiver.balance += transactionAmount;  // Increase balance by amount
+            receiver.income += transactionAmount;   // Add amount to income
+            await receiver.save({ session });
+
+            // Record the transaction
+            const transaction = new Transaction({
+                user_sender_id: sender._id,
+                user_receiver_id: receiver._id,
+                amount: transactionAmount,
+                transaction_type: payment_type,
+            });
+            await transaction.save({ session });
+
+            // Commit transaction
+            await session.commitTransaction();
+            session.endSession();
+
+            res.status(200).json({
+                message: "Payment successful",
+                transaction: { sender: sender.name, receiver: receiver.name, amount: transactionAmount, payment_type }
+            });
+        } catch (transactionError) {
+            // Rollback transaction in case of error
+            await session.abortTransaction();
+            session.endSession();
+            console.error('Error processing transaction:', transactionError);
+            return res.status(500).json({ error: "An error occurred during the transaction process" });
+        }
 
     } catch (error) {
-        await pool.query('ROLLBACK');
         console.error('Error in payment:', error);
         res.status(500).json({ error: "An error occurred during the payment process" });
     }
 }
 
 
+
+
 async function history(req, res) {
-    const { id } = req.params; // ID pengguna dari route
+    const { id } = req.params;
 
     try {
-        // Ambil semua transaksi untuk pengguna dengan ID yang diberikan
-        const result = await pool.query(
-            `SELECT 
-                t.transaction_type, 
-                t.amount, 
-                t.transaction_date, 
-                u_receiver.name AS receiver_name 
-             FROM 
-                transactions t
-             JOIN 
-                users u_receiver ON t.user_receiver_id = u_receiver.id 
-             WHERE 
-                t.user_sender_id = $1 
-             ORDER BY 
-                t.transaction_date`,
-            [id]
-        );
-        
+        // Fetch transactions for the given user ID
+        const transactions = await Transaction.find({ user_sender_id: id })
+            .populate('user_receiver_id', 'name') // Populate receiver's name
+            .sort({ transaction_date: 1 }); // Sort by transaction date
 
-        if (result.rowCount === 0) {
+        if (transactions.length === 0) {
             return res.status(404).json({ error: "No transactions found for this user" });
         }
 
-        // Mengembalikan hasil transaksi yang dikelompokkan berdasarkan tipe
-        res.status(200).json({ transactions: result.rows });
+        // Map results to include receiver's name and other details
+        const result = transactions.map(tx => ({
+            transaction_type: tx.transaction_type,
+            amount: tx.amount,
+            transaction_date: tx.transaction_date,
+            receiver_name: tx.user_receiver_id.name,
+        }));
+
+        res.status(200).json({ transactions: result });
     } catch (error) {
         console.error('Error fetching transactions:', error);
         res.status(500).json({ error: "An error occurred while fetching transactions" });
     }
 }
+
 async function historyByType(req, res) {
-    const { id } = req.params; // ID pengguna dari route
-    const { transactionType } = req.query; // Mengambil transaction_type dari query parameter
+    const { id } = req.params;
+    const { transactionType } = req.query;
 
     try {
-        // Ambil semua transaksi untuk pengguna dengan ID yang diberikan dan tipe transaksi tertentu
-        const result = await pool.query(
-            `SELECT 
-                t.transaction_type, 
-                t.amount, 
-                t.transaction_date, 
-                u_receiver.name AS receiver_name 
-             FROM 
-                transactions t
-             JOIN 
-                users u_receiver ON t.user_receiver_id = u_receiver.id 
-             WHERE 
-                t.user_sender_id = $1 AND 
-                t.transaction_type = $2 
-             ORDER BY 
-                t.transaction_date`,
-            [id, transactionType] // Menggunakan id dan transactionType sebagai parameter
-        );
+        const transactions = await Transaction.find({
+            user_sender_id: id,
+            transaction_type: transactionType,
+        })
+            .populate('user_receiver_id', 'name')
+            .sort({ transaction_date: 1 });
 
-        if (result.rowCount === 0) {
+        if (transactions.length === 0) {
             return res.status(404).json({ error: "No transactions found for this user with the specified type" });
         }
 
-        // Mengembalikan hasil transaksi yang dikelompokkan berdasarkan tipe
-        res.status(200).json({ transactions: result.rows });
+        const result = transactions.map(tx => ({
+            transaction_type: tx.transaction_type,
+            amount: tx.amount,
+            transaction_date: tx.transaction_date,
+            receiver_name: tx.user_receiver_id.name,
+        }));
+
+        res.status(200).json({ transactions: result });
     } catch (error) {
         console.error('Error fetching transactions by type:', error);
         res.status(500).json({ error: "An error occurred while fetching transactions by type" });
     }
 }
-
 
 
 
