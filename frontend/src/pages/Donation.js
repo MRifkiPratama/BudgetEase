@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Donation.css";
+import "../styles/Donation.css";
 
 function Donation() {
   const [userId, setUserId] = useState(null);
@@ -13,6 +13,39 @@ function Donation() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const titles = [
+    {
+      amount: 100,
+      title: "Novice Donor",
+      description:
+        "As a Novice Donor, you contribute to small-scale initiatives like local tree planting. Your support helps create green spaces and promotes community well-being.",
+    },
+    {
+      amount: 100000,
+      title: "Supporter of Change",
+      description:
+        "By reaching this level, you support community health programs, providing essential medical care to those in need. Your contribution directly impacts lives.",
+    },
+    {
+      amount: 500000,
+      title: "Champion for Education",
+      description:
+        "As a Champion for Education, your donations help fund resources for underprivileged children, improving their access to learning opportunities and empowering future generations.",
+    },
+    {
+      amount: 1000000,
+      title: "Guardian of the Environment",
+      description:
+        "This title reflects your commitment to wildlife conservation efforts. Your contributions help protect endangered species and preserve biodiversity for future generations.",
+    },
+    {
+      amount: 5000000,
+      title: "Hero of Humanity",
+      description:
+        "As a Hero of Humanity, you play a vital role in large-scale initiatives, such as providing clean water access to communities. Your generosity leads to significant change and lasting impact.",
+    },
+  ];
 
   const donations = [
     {
@@ -144,10 +177,21 @@ function Donation() {
     setSelectedDonationDetails(donationDetail?.details || "");
   };
 
+  const getTitleAndDescription = () => {
+    if (donation < 100) {
+      return { title: "", description: "Donate to unlock titles!" };
+    }
+
+    const matchedTitle = titles.find((title) => donation >= title.amount);
+
+    return matchedTitle || { title: "", description: "" };
+  };
+
+  const { title, description } = getTitleAndDescription();
+
   return (
     <div className="donation-container">
       <h1>Donation Management</h1>
-      {userId && <p>Logged in as User ID: {userId}</p>}
       <p><strong>Balance:</strong> Rp. {user.balance || "0.00"}</p>
 
       {error && <p className="error-message">{error}</p>}
@@ -189,6 +233,14 @@ function Donation() {
       <div className="donation-history">
         <h2>Total Donation</h2>
         <p>Rp. {donation}</p>
+
+        {/* Title and Description */}
+        {title && (
+          <div className="donation-title">
+            <h3>{title}</h3>
+            <p>{description}</p>
+          </div>
+        )}
       </div>
     </div>
   );

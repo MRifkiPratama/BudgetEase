@@ -1,0 +1,37 @@
+.payment-form input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.payment-form button {
+    padding: 12px 20px;
+    background-color: #6a4b93;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.payment-form select {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 200px;
+}
+
+.payment-form button:hover {
+    background-color: #5a3f7b;
+}
+
+.transaction-container h1 {
+    font-size: 24px;
+    color: #4b3a6f;
+    margin-bottom: 20px;
+  }

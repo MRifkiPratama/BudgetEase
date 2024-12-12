@@ -2,73 +2,76 @@ body, html {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #f8f3f9;
-  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #6a4b93, #f8f3f9);
+  font-family: 'Roboto', sans-serif;
 }
 
 .login-container {
-  width: 100%;
   max-width: 400px;
-  margin: auto;
-  padding: 30px;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.8);
+  margin: 50px auto;
+  padding: 40px;
+  border-radius: 15px;
+  background-color: #fff;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
   text-align: center;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
 }
 
 .login-container h2 {
-  font-size: 24px;
-  color: #4b3a6f;
-  margin-bottom: 30px;
+  font-size: 28px;
+  color: #6a4b93;
+  margin-bottom: 20px;
 }
 
 .login-container form {
   display: flex;
   flex-direction: column;
+  gap: 15px;
 }
 
 .login-container label {
   font-size: 14px;
   color: #4b3a6f;
   text-align: left;
-  margin-top: 10px;
 }
 
 .login-container input {
-  padding: 10px;
-  margin-top: 5px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
 .login-container button {
   padding: 12px;
-  margin-top: 10px;
   background-color: #6a4b93;
   color: white;
   border: none;
-  border-radius: 20px;
-  cursor: pointer;
+  border-radius: 25px;
   font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .login-container button:hover {
   background-color: #5a3f7b;
 }
 
-.signup-container {
+.error-message {
+  color: #ff4d4d;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.login-container .signup-link {
   margin-top: 15px;
   font-size: 14px;
   color: #4b3a6f;
 }
 
-.signup-container button {
+.login-container .signup-link button {
   background: none;
   color: #6a4b93;
   border: none;
   cursor: pointer;
   text-decoration: underline;
-  font-size: 14px;
 }

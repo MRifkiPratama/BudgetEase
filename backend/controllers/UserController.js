@@ -1,4 +1,3 @@
-// server/controllers/UserController.js
 const pool = require('../db');
 const bcrypt = require('bcrypt');
 const User = require('../models/User'); // Model MongoDB

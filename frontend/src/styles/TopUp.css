@@ -1,0 +1,61 @@
+.topup-container {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.topup-container h1 {
+  font-size: 24px;
+  color: #4b3a6f;
+  margin-bottom: 20px;
+}
+
+.topup-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.topup-section input[type="number"] {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.topup-section label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #4b3a6f;
+  cursor: pointer;
+}
+
+.topup-section input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.topup-container button {
+  padding: 12px 20px;
+  background-color: #6a4b93;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.topup-container button:hover {
+  background-color: #5a3f7b;
+}

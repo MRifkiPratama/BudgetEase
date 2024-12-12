@@ -1,0 +1,84 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f3f9;
+    font-family: Arial, sans-serif;
+}
+
+.donation-container {
+    width: 100%;
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.donation-container h1, 
+.donation-container h2 {
+    font-size: 24px;
+    color: #4b3a6f;
+    margin-bottom: 20px;
+}
+
+.donation-container p {
+    font-size: 16px;
+    color: #4b3a6f;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-size: 14px;
+}
+
+.success-message {
+    color: #4caf50;
+    font-size: 14px;
+}
+
+.donation-container input, 
+.donation-container select {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.donation-container button {
+    padding: 12px 20px;
+    background-color: #6a4b93;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+.donation-container button:hover {
+    background-color: #5a3f7b;
+}
+
+.donation-details {
+    text-align: left;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.donation-history h2, 
+.donation-title h3 {
+    color: #6a4b93;
+    font-weight: bold;
+}
+
+.donation-title p {
+    font-size: 14px;
+    color: #6a4b93;
+    margin-top: 10px;
+}

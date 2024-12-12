@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SignUp.css';
+import '../styles/SignUp.css';
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -40,7 +40,7 @@ const SignUp = () => {
   return (
     <div className="signup-container">
       <button className="back-button" onClick={() => navigate('/')}>
-        Kembali
+        Back
       </button>
       <h2>Sign Up</h2>
       <form onSubmit={handleSubmit}>

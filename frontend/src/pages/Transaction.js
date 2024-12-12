@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Transaction.css";
+import "../styles/Transaction.css";
 
 function Transaction() {
   const [userId, setUserId] = useState(null);
@@ -104,7 +104,6 @@ function Transaction() {
   return (
     <div className="transaction-container">
       <h1>Make a Payment</h1>
-      {userId && <p>Logged in as User ID: {userId}</p>}
       <p><strong>Balance:</strong> Rp. {user.balance || "0.00"}</p>
 
       {error && <p className="error-message">{error}</p>}

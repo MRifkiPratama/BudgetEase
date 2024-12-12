@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./History.css";
+import "../styles/History.css";
 
 function History() {
   const [userId, setUserId] = useState(null);
@@ -83,47 +83,55 @@ function History() {
 
   return (
     <div className="transaction-container">
-      <h1>Transaction History</h1>
-      {userId && <p> You can see your transaction history here</p>}
-
-      {error && <p className="error-message">{error}</p>}
-      {loading && <p>Loading...</p>}
-
+      <h1 className="page-title">Transaction History</h1>
       <div className="filter-section">
-        <h2>Filter Transactions</h2>
-        <select
-          value={transactionType}
-          onChange={(e) => setTransactionType(e.target.value)}
-        >
-          <option value="">Select Transaction Type</option>
-          {paymentTypes.map((type, index) => (
-            <option key={index} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
-        <button onClick={filterByType}>Filter</button>
+        <h2 className="section-title">Filter Transactions</h2>
+        <div className="filter-controls">
+          <select
+            value={transactionType}
+            onChange={(e) => setTransactionType(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">Select Transaction Type</option>
+            {paymentTypes.map((type, index) => (
+              <option key={index} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+          <button className="filter-button" onClick={filterByType}>
+            Filter
+          </button>
+        </div>
 
-        <h3>Filtered Transactions</h3>
+        <h3 className="subsection-title">Filtered Transactions</h3>
         {filteredTransactions.length === 0 && <p>No filtered transactions found.</p>}
-        <ul>
+        <ul className="transaction-list">
           {filteredTransactions.map((tx, index) => (
-            <li key={index}>
-              {tx.transaction_type}: Rp. {tx.amount} on{" "}
-              {new Date(tx.transaction_date).toLocaleDateString()} to {tx.receiver_name}
+            <li key={index} className="transaction-item">
+              <span className="transaction-type">{tx.transaction_type}</span>: Rp.{" "}
+              <span className="transaction-amount">{tx.amount}</span> on{" "}
+              <span className="transaction-date">
+                {new Date(tx.transaction_date).toLocaleDateString()}
+              </span>{" "}
+              to <span className="transaction-receiver">{tx.receiver_name}</span>
             </li>
           ))}
         </ul>
       </div>
 
       <div className="all-transactions">
-        <h2>All Transactions</h2>
+        <h2 className="section-title">All Transactions</h2>
         {transactions.length === 0 && <p>No transactions available.</p>}
-        <ul>
+        <ul className="transaction-list">
           {transactions.map((tx, index) => (
-            <li key={index}>
-              {tx.transaction_type}: Rp. {tx.amount} on{" "}
-              {new Date(tx.transaction_date).toLocaleDateString()} to {tx.receiver_name}
+            <li key={index} className="transaction-item">
+              <span className="transaction-type">{tx.transaction_type}</span>: Rp.{" "}
+              <span className="transaction-amount">{tx.amount}</span> on{" "}
+              <span className="transaction-date">
+                {new Date(tx.transaction_date).toLocaleDateString()}
+              </span>{" "}
+              to <span className="transaction-receiver">{tx.receiver_name}</span>
             </li>
           ))}
         </ul>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Report.css";
+import "../styles/Report.css";
 
 function Report() {
   const [userId, setUserId] = useState(null);
@@ -70,24 +70,18 @@ function Report() {
   }, [userId]);
 
   const getHealthStatus = (score) => {
-    if (score == 100) {
-      return "Amazing";
-    } else if (score >= 80 && score < 100) {
-      return "Great";
-    } else if (score >= 70 && score < 80) {
-      return "Good";
-    } else if (score >= 50 && score < 70) {
-      return "Fine";
+    if (score > 80 && score <= 100) {
+      return "Financially Healthy";
+    } else if (score > 40 && score <= 80) {
+      return "Financially Coping";
     } else {
-      return "Bad";
+      return "Financially Vulnerable";
     }
   };
 
   return (
     <div className="report-container">
       <h1>User Report</h1>
-      {userId && <p>Logged in as User ID: {userId}</p>}
-
       {error && <p className="error-message">{error}</p>}
       {loading && <p>Loading...</p>}
 
