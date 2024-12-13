@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 });
 
 // Routes
-app.use('users', userRoutes);
+app.use('/users', userRoutes);
 app.use('/transaction', transactionRoutes);
 app.use('/report', reportRoutes);
 app.use('/donation', donationRoutes);
