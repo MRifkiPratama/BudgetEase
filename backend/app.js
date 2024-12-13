@@ -13,7 +13,13 @@ const PORT = 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 mongoose.connect('mongodb+srv://muhammadrifkipratama:rpl@budgetease.l8x08.mongodb.net/BudgetEase');
-app.use(cors());
+app.use(cors(
+  {
+    origin: ["https://deploy-mern-1whq.vercel.app"],
+    methods: ["POST", "GET"],
+    credentials: true
+  }
+));
 app.use(express.urlencoded({extended: true}))
 app.use(bodyParser.json());
 
