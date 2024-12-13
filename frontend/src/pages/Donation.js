@@ -147,31 +147,31 @@ function Donation() {
   const getTitleAndDescription = () => {
     if (donation < 1000) {
       return { title: "", description: "Donate to unlock titles!" };
-    } else if (donation >= 1000 && donation < 100000) {
+    } else if (donation >= 1000 && donation < 120000) {
       return {
         title: "Novice Donor",
         description:
           "As a Novice Donor, you contribute to small-scale initiatives like local tree planting. Your support helps create green spaces and promotes community well-being.",
       };
-    } else if (donation >= 100000 && donation < 500000) {
+    } else if (donation >= 120000 && donation < 240000) {
       return {
         title: "Supporter of Change",
         description:
           "By reaching this level, you support community health programs, providing essential medical care to those in need. Your contribution directly impacts lives.",
       };
-    } else if (donation >= 500000 && donation < 1000000) {
+    } else if (donation >= 240000 && donation < 360000) {
       return {
         title: "Champion for Education",
         description:
           "As a Champion for Education, your donations help fund resources for underprivileged children, improving their access to learning opportunities and empowering future generations.",
       };
-    } else if (donation >= 1000000 && donation < 5000000) {
+    } else if (donation >= 360000 && donation < 480000) {
       return {
         title: "Guardian of the Environment",
         description:
           "This title reflects your commitment to wildlife conservation efforts. Your contributions help protect endangered species and preserve biodiversity for future generations.",
       };
-    } else if (donation >= 5000000) {
+    } else if (donation >= 480000) {
       return {
         title: "Hero of Humanity",
         description:
