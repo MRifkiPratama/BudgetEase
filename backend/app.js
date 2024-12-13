@@ -29,6 +29,10 @@ db.once('open', function(){
 console.log('Connected to MongoDB Muhammad Rifki Pratama');
 });
 
+app.get('/', (req, res) => {
+  res.send('Backend connect test');
+});
+
 app.use('/users', userRoutes);
 app.use('/transaction', transactionRoutes);
 app.use('/report', reportRoutes);
