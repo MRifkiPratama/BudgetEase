@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 mongoose.connect('mongodb+srv://muhammadrifkipratama:rpl@budgetease.l8x08.mongodb.net/BudgetEase');
 app.use(cors(
   {
-    origin: ["https://budget-ease-api2.vercel.app/"],
+    origin: ["https://budget-ease-frontened.vercel.app/"],
     methods: ["POST", "GET"],
     credentials: true
   }
